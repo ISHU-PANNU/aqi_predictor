@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Index Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+
+<body>
+    <div class="image-container">
+        <img src="https://www.treehugger.com/thmb/A5143gMkryOgN9577zjBrWHTfeg=/1732x1732/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1201722905-4ce01407335947c7980a3bc61420c6ff.jpg" alt="AQI image" class="result-image"height="300px" />
+    </div>
+    <h1>Predict Air Quality Index (AQI)</h1>
+
+    <form action="/predict" method="POST">
+        <label for="CO(GT)">CO(GT):</label>
+        <input type="text" name="CO(GT)" required><br>
+
+        <label for="C6H6(GT)">C6H6(GT):</label>
+        <input type="text" name="C6H6(GT)" required><br>
+
+        <label for="T">Temperature (T):</label>
+        <input type="text" name="T" required><br>
+
+        <label for="RH">Relative Humidity (RH):</label>
+        <input type="text" name="RH" required><br>
+
+        <label for="NOx(GT)">NOx(GT):</label>
+        <input type="text" name="NOx(GT)" required><br>
+
+        <button type="submit">Predict AQI</button>
+    </form>
+
+    <div id="result">
+        <h2>Predicted AQI: </h2>
+        <p id="prediction"></p>
+    </div>
+
+    <div class="bottom-image-container">
+        <img src="https://www.weather.gov/images/wrn/Infographics/2022/aqi-guide.png" alt="Bottom Image" class="bottom-image" />
+    </div>
+
+    <script>
+        const form = document.querySelector("form");
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const response = await fetch("/predict", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.predicted_AQI) {
+                document.getElementById("prediction").textContent = result.predicted_AQI;
+            } else {
+                document.getElementById("prediction").textContent = "Error: " + result.error;
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
